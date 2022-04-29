@@ -481,7 +481,11 @@ class PluginFieldsContainer extends CommonDBTM {
       }
 
       $input['itemtypes'] = isset($input['itemtypes'])
+<<<<<<< HEAD
          ? Sanitizer::dbEscape(json_encode($input['itemtypes']))
+=======
+         ? json_encode(Sanitizer::dbEscapeRecursive($input['itemtypes']))
+>>>>>>> Fix adding fields to namespaced itemtypes
          : null;
 
       return $input;
@@ -1800,8 +1804,13 @@ class PluginFieldsContainer extends CommonDBTM {
     *
     * @return string
     */
+<<<<<<< HEAD
    protected static function getSystemName(string $itemtype, string $container_name): string {
       return strtolower(str_replace('\\', '', $itemtype) . preg_replace('/s$/', '', $container_name));
+=======
+   static function getSystemName($itemtype = "", $raw_name = "") {
+      return strtolower(str_replace('\\', '', $itemtype) . preg_replace('/s$/', '', $raw_name));
+>>>>>>> Fix adding fields to namespaced itemtypes
    }
 
 
