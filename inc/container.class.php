@@ -28,6 +28,8 @@
  * -------------------------------------------------------------------------
  */
 
+use Glpi\Toolbox\Sanitizer;
+
 class PluginFieldsContainer extends CommonDBTM {
    static $rightname = 'config';
 
@@ -481,8 +483,8 @@ class PluginFieldsContainer extends CommonDBTM {
       }
 
       $input['itemtypes'] = isset($input['itemtypes'])
-                              ? json_encode($input['itemtypes'], true)
-                              : null;
+         ? json_encode(Sanitizer::dbEscapeRecursive($input['itemtypes']))
+         : null;
 
       return $input;
    }
@@ -1726,7 +1728,7 @@ class PluginFieldsContainer extends CommonDBTM {
     * @return string the classname
     */
    static function getSystemName($itemtype = "", $raw_name = "") {
-      return strtolower($itemtype.preg_replace('/s$/', '', $raw_name));
+      return strtolower(str_replace('\\', '', $itemtype) . preg_replace('/s$/', '', $raw_name));
    }
 
 
