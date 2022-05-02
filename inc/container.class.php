@@ -1546,6 +1546,7 @@ class PluginFieldsContainer extends CommonDBTM {
 
       $i = 76665;
 
+      $escaped_itemtype = $DB->escape(addslashes(addslashes($itemtype)));
       $query = "SELECT DISTINCT fields.id, fields.name, fields.label, fields.type, fields.is_readonly,
             containers.name as container_name, containers.label as container_label,
             containers.itemtypes, containers.id as container_id, fields.id as field_id
@@ -1557,9 +1558,10 @@ class PluginFieldsContainer extends CommonDBTM {
          INNER JOIN glpi_plugin_fields_fields fields
             ON containers.id = fields.plugin_fields_containers_id
             AND containers.is_active = 1
-         WHERE containers.itemtypes LIKE '%$itemtype%'
+         WHERE containers.itemtypes LIKE '%$escaped_itemtype%'
             AND fields.type != 'header'
             ORDER BY fields.id ASC";
+
       $res = $DB->query($query);
       while ($data = $DB->fetchAssoc($res)) {
 
