@@ -591,9 +591,9 @@ class PluginFieldsContainer extends CommonDBTM {
             $classname::uninstall();
          } else {
             //class does not exists; try to remove any existing table
-            $tablename = "glpi_plugin_fields_" . strtolower(
-               $itemtype . getPlural(preg_replace('/s$/', '', $this->fields['name']))
-            );
+            $tablename = "glpi_plugin_fields_" . strtolower(str_replace('\\', '', $itemtype) . getPlural(preg_replace('/s$/', '', $container->fields['name'])));
+
+
             $DB->query("DROP TABLE IF EXISTS `$tablename`");
          }
 
@@ -1261,9 +1261,8 @@ class PluginFieldsContainer extends CommonDBTM {
          } else if (isset($data['plugin_fields_'.$name.'dropdowns_id'])) {
             $value = $data['plugin_fields_'.$name.'dropdowns_id'];
          } else if ($field['mandatory'] == 1) {
-            $tablename = "glpi_plugin_fields_" . strtolower(
-               $itemtype . getPlural(preg_replace('/s$/', '', $container->fields['name']))
-            );
+
+            $tablename = "glpi_plugin_fields_" . strtolower(str_replace('\\', '', $itemtype) . getPlural(preg_replace('/s$/', '', $container->fields['name'])));
 
             $query = "SELECT * FROM `$tablename` WHERE
                `itemtype`='$itemtype'
@@ -1572,8 +1571,7 @@ class PluginFieldsContainer extends CommonDBTM {
             }
          }
 
-         $tablename = "glpi_plugin_fields_".strtolower($itemtype.
-                        getPlural(preg_replace('/s$/', '', $data['container_name'])));
+         $tablename = "glpi_plugin_fields_" . strtolower(str_replace('\\', '', $itemtype) . getPlural(preg_replace('/s$/', '', $data['container_name'])));
 
          //get translations
          $container = [
