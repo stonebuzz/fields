@@ -457,6 +457,8 @@ class PluginFieldsField extends CommonDBTM {
          $_SESSION['saveInput'] = ['plugin_fields_containers_id' => $container->getField('id')];
       }
 
+      $itemtype_to_exclude = json_decode($container->fields['itemtypes']);
+
       $this->initForm($ID, $options);
       $this->showFormHeader($ID, $options);
 
@@ -477,7 +479,7 @@ class PluginFieldsField extends CommonDBTM {
          echo "<tr>";
          echo "<td>".__("Type")." : </td>";
          echo "<td>";
-         Dropdown::showFromArray('type', self::getTypes(false), ['value' => $this->fields["type"]]);
+         Dropdown::showFromArray('type', self::getTypes(false, $itemtype_to_exclude), ['value' => $this->fields["type"]]);
          echo "</td>";
       }
       echo "<td>".__("Default values")." : </td>";
@@ -864,7 +866,7 @@ class PluginFieldsField extends CommonDBTM {
       $this->fields['type']      = 'text';
    }
 
-   static function getTypes(bool $flat_list = true) {
+   static function getTypes(bool $flat_list = true, array $itemtype_to_exclude = []) {
       global $CFG_GLPI;
 
       $common_types = [
@@ -917,7 +919,21 @@ class PluginFieldsField extends CommonDBTM {
           __('Other')          => $other_types,
       ];
 
+      //remove container itemtypes from list
+      foreach ($itemtype_to_exclude as $itemtype_val) {
+         self::recursive_unset($all_types, 'dropdown-'.$itemtype_val);
+      }
+
       return $flat_list ? array_merge([], ...array_values($all_types)) : $all_types;
+   }
+
+   static function recursive_unset(&$array, $unwanted_key) {
+      unset($array[$unwanted_key]);
+      foreach ($array as &$value) {
+          if (is_array($value)) {
+            self::recursive_unset($value, $unwanted_key);
+          }
+      }
    }
 
    function post_addItem() {
